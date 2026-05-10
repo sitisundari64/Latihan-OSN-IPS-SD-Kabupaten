@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CBT OSN IPS SD Kabupaten</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f3f4f6;color:#1a1a1a}
+.app{max-width:800px;margin:0 auto;padding:1rem}
+.header{background:linear-gradient(135deg,#7F77DD,#534AB7);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1rem;color:#fff;display:flex;align-items:center;justify-content:space-between}
+.header h1{font-size:18px;font-weight:500}
+.header p{font-size:13px;opacity:0.85}
+.timer-box{background:rgba(255,255,255,0.2);border-radius:8px;padding:8px 16px;text-align:center;min-width:90px}
+.timer-box .t-label{font-size:11px;opacity:0.8}
+.timer-box .t-val{font-size:22px;font-weight:500;letter-spacing:2px}
+.timer-warn{color:#fca5a5}
+.card{background:#fff;border:0.5px solid #e5e7eb;border-radius:12px;padding:1.5rem;margin-bottom:1rem}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:14px;color:#6b7280;margin-bottom:6px}
+.form-group input,.form-group select{width:100%;padding:9px 12px;border:0.5px solid #d1d5db;border-radius:8px;font-size:15px;background:#fff;color:#1a1a1a}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border-radius:8px;font-size:15px;font-weight:500;cursor:pointer;border:0.5px solid #d1d5db;background:#fff;color:#1a1a1a;transition:background 0.15s}
+.btn:hover{background:#f3f4f6}
+.btn-primary{background:#534AB7;color:#fff;border-color:#534AB7}
+.btn-primary:hover{background:#3C3489}
+.btn-danger{background:#A32D2D;color:#fff;border-color:#A32D2D}
+.btn-danger:hover{background:#791F1F}
+.soal-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem}
+.soal-nav button{width:36px;height:36px;border-radius:8px;border:0.5px solid #d1d5db;background:#fff;color:#1a1a1a;font-size:13px;cursor:pointer;font-weight:500}
+.soal-nav button.answered{background:#534AB7;color:#fff;border-color:#534AB7}
+.soal-nav button.current{outline:2px solid #7F77DD;outline-offset:1px}
+.soal-content{font-size:15px;line-height:1.7;color:#1a1a1a}
+.soal-num{font-size:13px;color:#6b7280;margin-bottom:8px}
+.soal-q{margin-bottom:1rem;font-weight:500}
+.stimulus{margin-bottom:1rem}
+.stimulus table{border-collapse:collapse;width:100%;font-size:14px}
+.stimulus table td,.stimulus table th{border:1px solid #d1d5db;padding:6px 10px}
+.stimulus table th{background:#f3f4f6;font-weight:500}
+.options label{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;border:0.5px solid #e5e7eb;margin-bottom:8px;cursor:pointer;font-size:14px;line-height:1.5}
+.options label:hover{background:#f3f4f6}
+.options label.selected{border-color:#534AB7;background:#EEEDFE;color:#26215C}
+.options input[type=radio]{margin-top:2px;accent-color:#534AB7}
+.nav-btns{display:flex;justify-content:space-between;margin-top:1rem;flex-wrap:wrap;gap:8px}
+.result-card{text-align:center;padding:2rem}
+.result-score{font-size:56px;font-weight:500;color:#534AB7}
+.result-label{font-size:16px;color:#6b7280;margin-bottom:1.5rem}
+.result-feedback{background:#EEEDFE;border-radius:8px;padding:1rem 1.25rem;color:#3C3489;font-size:14px;text-align:left;margin-bottom:1.5rem;line-height:1.7}
+.progress-bar{height:6px;background:#e5e7eb;border-radius:99px;margin-bottom:1rem;overflow:hidden}
+.progress-fill{height:100%;background:#534AB7;border-radius:99px;transition:width 0.3s}
+.detail-table{width:100%;font-size:13px;border-collapse:collapse;margin-top:1rem}
+.detail-table td,.detail-table th{padding:6px 8px;border-bottom:0.5px solid #e5e7eb;text-align:left}
+.detail-table th{color:#6b7280;font-weight:500}
+.badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:500}
+.badge-ok{background:#EAF3DE;color:#3B6D11}
+.badge-err{background:#FCEBEB;color:#A32D2D}
+.footer{text-align:center;font-size:12px;color:#9ca3af;padding:1rem 0 0.5rem;border-top:0.5px solid #e5e7eb;margin-top:1rem}
+.screen{display:none}
+.screen.active{display:block}
+.pernyataan-box{background:#f3f4f6;border-left:3px solid #7F77DD;padding:10px 14px;border-radius:0 8px 8px 0;font-size:14px;margin-bottom:0.75rem;line-height:1.7}
+.stat-grid{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem}
+.stat-box{background:#f3f4f6;border-radius:8px;padding:12px 20px;text-align:center}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div>
+      <h1>CBT OSN IPS SD — Tingkat Kabupaten</h1>
+      <p>60 Soal Pilihan Ganda &nbsp;|&nbsp; Kemendikdasmen</p>
+    </div>
+    <div class="timer-box" id="timerBox">
+      <div class="t-label">Sisa Waktu</div>
+      <div class="t-val" id="timerVal">90:00</div>
+    </div>
+  </div>
+
+  <!-- SCREEN LOGIN -->
+  <div id="screenLogin" class="screen active">
+    <div class="card">
+      <h2 style="font-size:16px;margin-bottom:1.25rem">Identitas Peserta</h2>
+      <div class="form-group">
+        <label>Nama Lengkap</label>
+        <input type="text" id="inputNama" placeholder="Tulis nama lengkap..." />
+      </div>
+      <div class="form-group">
+        <label>Kelas</label>
+        <select id="inputKelas">
+          <option value="">— Pilih Kelas —</option>
+          <option value="3">Kelas 3</option>
+          <option value="4">Kelas 4</option>
+          <option value="5">Kelas 5</option>
+          <option value="6">Kelas 6</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" onclick="startExam()">&#9654; Mulai Ujian</button>
+    </div>
+    <div class="footer">&copy; 2026 Siti Sundari, M.Pd. &mdash; Kepala SMPN 2 Ganeas</div>
+  </div>
+
+  <!-- SCREEN UJIAN -->
+  <div id="screenExam" class="screen">
+    <div class="card" style="padding:1rem">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="soal-nav" id="soalNav"></div>
+    </div>
+    <div class="card" id="soalCard">
+      <div class="soal-num" id="soalNum"></div>
+      <div class="soal-content">
+        <div class="soal-q" id="soalQ"></div>
+        <div class="stimulus" id="soalStimulus"></div>
+        <div class="options" id="soalOptions"></div>
+      </div>
+      <div class="nav-btns">
+        <button class="btn" onclick="prevSoal()">&#8592; Sebelumnya</button>
+        <button class="btn btn-danger" onclick="confirmSubmit()">&#10003; Selesai</button>
+        <button class="btn btn-primary" onclick="nextSoal()">Selanjutnya &#8594;</button>
+      </div>
+    </div>
+    <div class="footer">&copy; 2026 Siti Sundari, M.Pd. &mdash; Kepala SMPN 2 Ganeas</div>
+  </div>
+
+  <!-- SCREEN HASIL -->
+  <div id="screenResult" class="screen">
+    <div class="card result-card">
+      <div style="font-size:14px;color:#6b7280;margin-bottom:4px" id="resNama"></div>
+      <div class="result-score" id="resScore"></div>
+      <div class="result-label" id="resLabel"></div>
+      <div class="result-feedback" id="resFeedback"></div>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div style="font-size:22px;font-weight:500;color:#3B6D11" id="resBenar">-</div>
+          <div style="font-size:12px;color:#6b7280">Benar</div>
+        </div>
+        <div class="stat-box">
+          <div style="font-size:22px;font-weight:500;color:#A32D2D" id="resSalah">-</div>
+          <div style="font-size:12px;color:#6b7280">Salah</div>
+        </div>
+        <div class="stat-box">
+          <div style="font-size:22px;font-weight:500;color:#888780" id="resKosong">-</div>
+          <div style="font-size:12px;color:#6b7280">Kosong</div>
+        </div>
+      </div>
+      <table class="detail-table">
+        <thead><tr><th>No</th><th>Topik</th><th>Jawaban</th><th>Kunci</th><th>Status</th></tr></thead>
+        <tbody id="detailTbody"></tbody>
+      </table>
+    </div>
+    <div class="footer">&copy; 2026 Siti Sundari, M.Pd. &mdash; Kepala SMPN 2 Ganeas</div>
+  </div>
+</div>
+
+<script>
+const SOAL = [
+{n:1,q:"Perhatikan pernyataan berikut! Pernyataan yang paling tepat untuk menggambarkan faktor pendorong urbanisasi adalah …",
+stimulus:{type:"list",items:["(1) Terjadinya kemiskinan di daerah pedesaan","(2) Terbatasnya fasilitas pendidikan, kesehatan, dan lainnya di pedesaan","(3) Terbatasnya lapangan pekerjaan di pedesaan","(4) Terjadinya kesenjangan tempat tinggal","(5) Lengkapnya fasilitas pendidikan, kesehatan, dan lainnya di kota"]},
+opts:["(1), (2), dan (3)","(1), (3), dan (4)","(2), (4), dan (5)","(3), (4), dan (5)"],ans:3,topic:"Urbanisasi"},
+{n:2,q:"Perhatikan tabel berikut! Urutan benar (B) dan salah (S) berdasarkan tabel di atas adalah …",
+stimulus:{type:"table",headers:["No","Pernyataan"],rows:[["1","Banjir dapat terjadi karena banyak hutan yang ditebang"],["2","Pembangunan kota yang tidak teratur dapat menyebabkan banjir"],["3","Terjadinya perubahan wilayah tidak mengakibatkan bencana banjir"],["4","Menanam pohon dapat membantu mengurangi bencana banjir"]]},
+opts:["B-B-S-B","B-S-B-B","S-S-B-B","S-B-B-S"],ans:0,topic:"Bencana Alam"},
+{n:3,q:"Daerah pegunungan dikenal dengan udara sejuk serta daerah perkebunan. Selain itu, di daerah pegunungan memiliki keragaman potensi wisata alam, seperti air terjun dan tempat perkemahan. Kenampakan alam yang terdapat di daerah tersebut adalah …",
+stimulus:{type:"none"},
+opts:["dataran rendah","dataran tinggi","pantai","sungai"],ans:1,topic:"Kenampakan Alam"},
+{n:4,q:"Perhatikan gambar bagian-bagian daratan, angka 4 dan angka 5 adalah …",
+stimulus:{type:"text",content:"[Gambar: ilustrasi bagian-bagian daratan — gunung, lembah, bukit, ngarai, dataran, dan sungai berlabel angka 1-9]"},
+opts:["danau dan sungai","lembah dan bukit","bukit dan ngarai","lembah dan sungai"],ans:1,topic:"Kenampakan Daratan"},
+{n:5,q:"Angka 5 dan 6 menunjukkan dua perairan penting di Indonesia yang memiliki peran besar dalam jalur pelayaran dan ekosistem laut. Nama laut yang ditunjukkan oleh angka 5 dan 6 adalah …",
+stimulus:{type:"text",content:"[Peta Indonesia — angka 5 berada di wilayah Maluku, angka 6 di selatan Papua dekat Australia]"},
+opts:["Laut Jawa dan Laut Flores","Laut Natuna dan Laut Banda","Laut Seram dan Laut Arafuru","Laut Banda dan Laut Arafuru"],ans:3,topic:"Perairan Indonesia"},
+{n:6,q:"Flora dan fauna yang berada di sebelah timur Garis Weber adalah …",
+stimulus:{type:"text",content:"[Peta persebaran fauna Indonesia: Garis Wallace memisahkan fauna Oriental dan Wallacea; Garis Weber memisahkan Wallacea dan fauna Australasian/Papua]"},
+opts:["Kayu Putih dan Bekantan","Matoa dan Kasuari","Beringin dan Cendrawasih","Kantung semar dan Tarsius"],ans:1,topic:"Flora & Fauna"},
+{n:7,q:"Indonesia terletak di sekitar garis khatulistiwa dan memiliki curah hujan yang tinggi, sehingga dikenal dengan iklim …",
+stimulus:{type:"none"},
+opts:["laut","basah","tropis","muson"],ans:2,topic:"Iklim Indonesia"},
+{n:8,q:"Berdasarkan pernyataan di atas, hubungan dua pernyataan yang tepat adalah …",
+stimulus:{type:"table2",headers:["Pernyataan A","Pernyataan B"],rows:[["Banjir merupakan bencana alam yang menimbulkan berbagai kerusakan dan terganggunya aktivitas sosial ekonomi masyarakat","Penebangan pohon secara besar-besaran dan pembangunan yang tidak terkendali di daerah hilir menyebabkan terjadinya banjir di daerah hulu"]]},
+opts:["pernyataan A benar, pernyataan B benar, dan ada hubungan","pernyataan A benar, pernyataan B benar, tetapi tidak ada hubungan","pernyataan A benar, pernyataan B salah","pernyataan A salah, pernyataan B benar"],ans:0,topic:"Bencana Alam"},
+{n:9,q:"Urutan benar (B) dan salah (S) berdasarkan tabel di atas adalah …",
+stimulus:{type:"table",headers:["No.","Pernyataan"],rows:[["1","Penduduk yang tinggal di dataran tinggi menggunakan pakaian yang tipis dalam beraktivitas"],["2","Penduduk yang tinggal di dataran rendah menggunakan pakaian yang tebal dalam beraktivitas"],["3","Penduduk yang tinggal di dataran tinggi lebih banyak menanam sayuran dan buah-buahan"],["4","Penduduk yang tinggal di dataran rendah lebih banyak menanam padi dan palawija"]]},
+opts:["B-B-S-B","B-S-B-B","S-S-B-B","S-B-B-S"],ans:2,topic:"Kehidupan & Lingkungan"},
+{n:10,q:"Berdasarkan pernyataan di atas, yang menyebabkan bencana gempa bumi faktor alam dan non alam di Indonesia adalah …",
+stimulus:{type:"list",items:["(1) Jatuhnya meteor dengan ukuran besar","(2) Pergerakan lempeng tektonik yang dinamis","(3) Pemotongan lereng untuk pembangunan jalan","(4) Peledakan batuan menggunakan dinamit","(5) Aktivitas gunung api yang meningkat"]},
+opts:["(1), (2), dan (3)","(1), (3), dan (5)","(2), (4), dan (5)","(3), (4), dan (5)"],ans:2,topic:"Gempa Bumi"},
+{n:11,q:"Berikut ini dampak dari penebangan hutan yang berlebihan adalah …",
+stimulus:{type:"none"},
+opts:["menaikan kualitas oksigen di bumi","menurunkan emisi karbon","menyebabkan bencana kekeringan","meningkatkan jumlah serapan air"],ans:2,topic:"Lingkungan Hidup"},
+{n:12,q:"Sumber daya alam dapat digolongkan menjadi yang dapat diperbaharui dan tidak dapat diperbaharui. Berikut ini contoh sumber daya alam yang tidak dapat diperbaharui adalah …",
+stimulus:{type:"none"},
+opts:["angin","air","kayu","logam"],ans:3,topic:"SDA"},
+{n:13,q:"Contoh pemekaran wilayah di Indonesia akibat dari otonomi daerah adalah …",
+stimulus:{type:"none"},
+opts:["Papua yang dimekarkan menjadi 6 provinsi","Jawa yang dimekarkan menjadi 4 provinsi","Sumatera yang dimekarkan menjadi 8 provinsi","Sulawesi yang dimekarkan menjadi 3 provinsi"],ans:0,topic:"Otonomi Daerah"},
+{n:14,q:"Tujuan dari pemekaran wilayah adalah …",
+stimulus:{type:"none"},
+opts:["timpangnya pemeraataan dan keadilan","mempercepat pengelolaan potensi daerah","kondisi geografis yang terlalu luas","pelayanan masyarakat tidak efektif dan efisien"],ans:1,topic:"Otonomi Daerah"},
+{n:15,q:"Perubahan yang terjadi di wilayah pesisir akibat adanya bencana tsunami adalah …",
+stimulus:{type:"none"},
+opts:["kerusakan ekosistem darat dan laut","penambahan lahan tambak","peningkatan populasi ikan","perbaikan kualitas air"],ans:0,topic:"Bencana Alam"},
+{n:16,q:"Semangat dan bersungguh-sungguh dalam belajar bisa membuat kita pintar dan mendapatkan prestasi seperti juara OSN Tingkat Nasional. Salah satu fungsi Lembaga Pendidikan yaitu …",
+stimulus:{type:"none"},
+opts:["memberikan pengetahuan dan keterampilan","memberikan layanan kesehatan masyarakat","melestarikan dan mengembangkan kebudayaan","mengatur dan mengelola kehidupan Masyarakat"],ans:0,topic:"Lembaga Sosial"},
+{n:17,q:"Berbicara dengan orang tua harus bersikap hormat dan sopan, salah satunya yaitu dengan cara …",
+stimulus:{type:"none"},
+opts:["memperhatikan dan mendengarkan apa yang disampaikan orang tua","membuat alasan untuk menolak dan tidak menuruti perintah orang tua","menyampaikan perbedaan pendapat dan menentangnya","menyela dan memotong pembicaraan ketika salah"],ans:0,topic:"Norma & Nilai"},
+{n:18,q:"Masyarakat Indonesia terdiri dari berbagai suku bangsa dan agama yang berbeda-beda. Dalam melakukan interaksi, seharusnya kita bersikap …",
+stimulus:{type:"none"},
+opts:["berteman berdasarkan agama yang sama","bergaul dengan teman dari suku yang sama","mengajak teman untuk beribadah sesuai agama kita","menghargai perbedaan dan berteman dengan baik"],ans:3,topic:"Keberagaman"},
+{n:19,q:"Berdasarkan pernyataan di atas, yang termasuk ke dalam proses sosial asosiatif adalah …",
+stimulus:{type:"list",items:["(1) Melakukan gotong royong membersihkan lingkungan","(2) Menyesuaikan diri di lingkungan sekolah baru","(3) Kerja kelompok membuat proyek Sains","(4) Koordinasi untuk memenangkan pertandingan"]},
+opts:["(1), (2), dan (3)","(1), (2), dan (4)","(1), (3), dan (4)","(2), (3), dan (4)"],ans:2,topic:"Proses Sosial"},
+{n:20,q:"Amir ingin membeli rumah, namun dana yang dimiliki tidak cukup, akhirnya ia mengajukan kredit ke bank. Pernyataan di bawah ini yang menunjukkan fungsi bank adalah …",
+stimulus:{type:"none"},
+opts:["perantara dalam pembayaran","tempat menghimpun dana masyarakat","pembiayaan investasi perusahaan","tempat penukaran uang masyarakat"],ans:1,topic:"Lembaga Keuangan"},
+{n:21,q:"Berdasarkan pernyataan tersebut, perilaku yang harus dilakukan untuk mengurangi dampak teknologi melalui literasi digital adalah …",
+stimulus:{type:"list",items:["(1) Menghormati perbedaan pendapat di media sosial","(2) Menghindari penyebaran hoaks dan ujaran kebencian","(3) Mengatur waktu penggunaan gadget agar tidak berlebihan","(4) Menyaring informasi yang diterima sebelum disebarkan","(5) Mencermati informasi dari berbagai sumber yang terpercaya"]},
+opts:["(1), (2), dan (3)","(1), (2), dan (5)","(2), (4), dan (5)","(3), (4), dan (5)"],ans:2,topic:"Literasi Digital"},
+{n:22,q:"Pasangkan pernyataan dan norma pada tabel berikut!",
+stimulus:{type:"table",headers:["No","Pernyataan","Norma"],rows:[["(1)","Norma yang dapat kita pelajari dari kitab suci","(A) Norma Kesopanan"],["(2)","Setiap pelanggaran akan mendapatkan sanksi yang tegas seperti denda atau kurungan penjara","(B) Norma Kesusilaan"],["(3)","Kita akan merasa malu atau tidak nyaman ketika melanggar norma ini","(C) Norma Hukum"],["(4)","Norma yang berisi tentang perbuatan yang dianggap benar dan salah oleh masyarakat di suatu daerah tertentu","(D) Norma Agama"]]},
+opts:["1D, 2C, 3B, dan 4A","1A, 2D, 3C, dan 4B","1B, 2C, 3A, dan 4C","1C, 2B, 3A, dan 4D"],ans:0,topic:"Norma"},
+{n:23,q:"Anak memiliki hak untuk diberikan kasih sayang dan perlindungan oleh orang tua. Salah satu peran keluarga yang terkait dengan fungsi sosialisasi nilai dan norma berikut ini adalah …",
+stimulus:{type:"none"},
+opts:["keluarga memberikan pendidikan agar dapat berperan di masyarakat","anak dipenuhi semua fasilitasnya sesuai dengan kesanggupan keluarga","ayah memberikan pemahaman kerja keras dan disiplin pada anak","ibu memberikan kasih sayang dan memenuhi kebutuhan sehari-hari"],ans:0,topic:"Lembaga Keluarga"},
+{n:24,q:"Zebra cross merupakan tempat menyebrang di jalan raya untuk menjaga ketertiban dan keselamatan berlalu lintas. Sikap yang tepat berdasarkan hal tersebut adalah …",
+stimulus:{type:"none"},
+opts:["menggunakan zebra cross jika ada polisi yang mengawasi","tidak perlu menggunakan zebra cross karena sudah pandai menyebrang","menggunakan zebra cross untuk mematuhi norma di jalan raya","sesekali menggunakan zebra cross jika dibutuhkan"],ans:2,topic:"Norma & Ketertiban"},
+{n:25,q:"Pasangkan lembaga dan peran lembaga pada tabel berikut!",
+stimulus:{type:"table",headers:["Lembaga","Peranan"],rows:[["(1) Kepolisian Republik Indonesia","(A) Menjaga stabilitas nilai tukar rupiah"],["(2) Komisi Pemberantasan Korupsi","(B) Memberikan pendidikan formal bagi anak"],["(3) Bank Indonesia","(C) Mencegah Korupsi"],["(4) Sekolah","(D) Menjaga keamanan dan ketertiban"]]},
+opts:["1A, 2D, 3A, dan 4B","1B, 2C, 3A, dan 4C","1D, 2C, 3A, dan 4B","1C, 2D, 3B, dan 4A"],ans:2,topic:"Lembaga Sosial"},
+{n:26,q:"Pasangkan rumah adat, asal daerah dan tarian daerah pada tabel tersebut!",
+stimulus:{type:"table",headers:["Rumah Adat","Tarian","Asal Daerah"],rows:[["A. Rumah Gadang","1. Tari Gambyong","a. Sumatera Selatan"],["B. Rumah Joglo","2. Tari Sajojo","b. Betawi"],["C. Rumah Limas","3. Tari Piring","c. Jawa Tengah"],["D. Rumah Honai","4. Tari Cokek","d. Papua"],["E. Rumah Kebaya","5. Tari Gending Sriwijaya","e. Sumatera Barat"]]},
+opts:["(B), (1), dan (c)","(C), (4), dan (b)","(A), (3), dan (d)","(E), (5), dan (e)"],ans:3,topic:"Budaya Daerah"},
+{n:27,q:"Teks proklamasi disusun oleh Ir. Soekarno, Moh. Hatta, dan Ahmad Soebardjo. Setelah disepakati, proklamasi dibacakan pada 17 Agustus 1945 oleh Ir. Soekarno didampingi Moh. Hatta. Bentuk proses sosial berdasarkan wacana tersebut adalah …",
+stimulus:{type:"none"},
+opts:["persaingan antar tokoh","akomodasi tanpa kesepakatan","kerja sama antar tokoh bangsa","penaklukan terhadap penjajah"],ans:2,topic:"Proses Sosial"},
+{n:28,q:"Pernyataan sikap yang menghargai keberagaman sosial budaya adalah …",
+stimulus:{type:"list",items:["(1) Menggunakan bahasa Indonesia saat berbicara dengan teman yang berbeda daerah","(2) Mengejek teman karena gaya bicaranya berbeda","(3) Berteman tanpa membedakan asal suku bangsa","(4) Mengenal dan mempelajari budaya suku bangsa lain","(5) Memperolok pakaian adat yang berbeda"]},
+opts:["(1), (2), dan (3)","(1), (3), dan (4)","(2), (4), dan (5)","(3), (4), dan (5)"],ans:1,topic:"Keberagaman Budaya"},
+{n:29,q:"Berdasarkan pernyataan di atas, hubungan dua pernyataan yang tepat adalah …",
+stimulus:{type:"table2",headers:["Pernyataan A","Pernyataan B"],rows:[["Perubahan pola konsumsi terjadi karena keterbukaan informasi dan banyaknya tempat yang menyajikan makanan khas luar negeri.","Saat ini sebagian masyarakat mengonsumsi makanan khas dari luar negeri, seperti pizza, burger, mie ramen, sushi, dan lain-lain."]]},
+opts:["pernyataan A benar, Pernyataan B benar, dan keduanya saling berhubungan","pernyataan A benar, Pernyataan B benar, tetapi tidak saling berhubungan","pernyataan A benar, Pernyataan B salah","pernyataan A salah, Pernyataan B benar"],ans:0,topic:"Globalisasi"},
+{n:30,q:"Pernyataan yang menunjukkan sikap cermat memilih informasi di era globalisasi adalah …",
+stimulus:{type:"list",items:["(1) Mendapatkan berita dari sumber yang terpercaya","(2) Menyebarkan pesan yang belum jelas sumbernya","(3) Memilih dan menyaring informasi dengan benar","(4) Langsung percaya pada berita dari media sosial","(5) Memeriksa akurasi dan kebenaran sumber informasi"]},
+opts:["(1), (2), dan (3)","(1), (3), dan (5)","(2), (4), dan (5)","(3), (4), dan (5)"],ans:1,topic:"Literasi Digital"},
+{n:31,q:"Pengalokasian sumber daya yang terbatas untuk memenuhi kebutuhan yang tidak terbatas menjadi dasar dari kegiatan ekonomi. Tindakan berikut yang dilaksanakan sesuai dengan konsep tersebut adalah …",
+stimulus:{type:"none"},
+opts:["menggunakan seluruh gaji yang diterima untuk kegiatan konsumsi keluarga","memberikan sanksi kepada karyawan yang melanggar tata tertib perusahaan","mengonsumsi makanan bergizi adalah upaya untuk mencegah terjadinya stunting","menginvestasikan seluruh penghasilannya untuk mendapatkan kebebasan finansial"],ans:3,topic:"Ekonomi Dasar"},
+{n:32,q:"Peran BUMN yang tepat berdasarkan gambar tersebut adalah …",
+stimulus:{type:"text",content:"[Gambar: kereta api KAI di stasiun — menunjukkan layanan transportasi publik oleh BUMN]"},
+opts:["kesejahteraan rakyat","penyelenggara pelayanan publik","perintis sektor usaha swasta","pembangunan lapangan kerja"],ans:1,topic:"BUMN"},
+{n:33,q:"Berdasarkan teks di atas, ecobrick memiliki nilai guna …",
+stimulus:{type:"text",content:"Sampah plastik dapat didaurulang menjadi ecobrick berupa bata yang ramah lingkungan. Ecobrick mampu menggantikan material konvensional bahan bangunan seperti bata merah atau batako. Dengan demikian, sampah plastik memiliki nilai ekonomi dan menghemat biaya produksi pada konstruksi bangunan."},
+opts:["element utility","form utility","place utility","ownership utility"],ans:1,topic:"Nilai Guna"},
+{n:34,q:"Berdasarkan pernyataan di atas, hubungan dua pernyataan yang tepat adalah …",
+stimulus:{type:"table2",headers:["Pernyataan A","Pernyataan B"],rows:[["Uang sebagai alat pembayaran yang sah dipakai untuk membayar barang atau jasa yang dibutuhkan","Memindahkan sebidang tanah ketempat lain dengan cara ditukar dengan uang, kemudian membeli tanah di tempat lain"]]},
+opts:["pernyataan A benar, pernyataan B benar, ada hubungan","pernyataan A benar, pernyataan B benar, tidak ada hubungan","pernyataan A benar, pernyataan B salah","pernyataan A salah, pernyataan B benar"],ans:2,topic:"Fungsi Uang"},
+{n:35,q:"Kegiatan ekonomi yang tepat berdasarkan gambar tersebut adalah …",
+stimulus:{type:"text",content:"[Gambar: petani sedang memanen padi di sawah dengan caping]"},
+opts:["distribusi","produksi","konsumsi","produktif"],ans:1,topic:"Kegiatan Ekonomi"},
+{n:36,q:"Berdasarkan gambar di atas, penambahan nilai guna yang tepat adalah …",
+stimulus:{type:"text",content:"[Gambar: kayu gelondongan → (panah) → meja kursi & lemari — menunjukkan perubahan bentuk bahan baku menjadi barang jadi]"},
+opts:["nilai guna kepemilikan","nilai guna tempat","nilai guna bentuk","nilai guna waktu"],ans:2,topic:"Nilai Guna"},
+{n:37,q:"Fungsi uang yang tepat berdasarkan gambar tersebut adalah …",
+stimulus:{type:"text",content:"[Gambar: tiga kue dengan harga berbeda — bolu Rp1.500, donat Rp3.500, cupcake Rp5.500 — menunjukkan penetapan harga satuan]"},
+opts:["alat tukar","satuan hitung","penyimpan nilai","alat pembayaran"],ans:1,topic:"Fungsi Uang"},
+{n:38,q:"Pada gambar tersebut energi listrik yang dihasilkan berasal dari …",
+stimulus:{type:"text",content:"[Gambar: kincir angin (wind turbine) di tepi pantai dengan ombak laut — pembangkit listrik tenaga angin laut]"},
+opts:["panas matahari","gelombang laut","angin darat","angin laut"],ans:3,topic:"Energi Terbarukan"},
+{n:39,q:"Berdasarkan pernyataan di atas, tujuan kegiatan ekspor adalah …",
+stimulus:{type:"list",items:["(1) Meningkatkan laba perusahaan","(2) Membuka pasar baru di dalam negeri","(3) Memanfaatkan kelebihan komoditas yang telah dimiliki","(4) Memenuhi kebutuhan dalam negeri","(5) Bersaing dalam pasar internasional"]},
+opts:["(1), (2), dan (3)","(1), (3), dan (5)","(2), (4), dan (5)","(3), (4), dan (5)"],ans:1,topic:"Perdagangan Internasional"},
+{n:40,q:"Hambatan perdagangan internasional ada pada pernyataan nomor …",
+stimulus:{type:"list",items:["(1) Perbedaan bahasa","(2) Peperangan","(3) Bea masuk tinggi","(4) Jarak antar negara","(5) Pembatasan kuota"]},
+opts:["(1), (2) dan (3)","(1), (2) dan (4)","(1), (3) dan (5)","(2), (3) dan (5)"],ans:3,topic:"Perdagangan Internasional"},
+{n:41,q:"Berdasarkan pernyataan di atas, hubungan dua pernyataan yang tepat adalah …",
+stimulus:{type:"table2",headers:["Pernyataan A","Pernyataan B"],rows:[["Dataran rendah banyak dialiri sungai, tanahnya gembur dan suhu udaranya panas, penduduknya banyak menanam kopi, teh dan kakau","Hasil perikanan laut diantaranya ikan tongkol, tuna, udang, rumput laut dan berbagai biota laut lainnya"]]},
+opts:["pernyataan A benar, pernyataan B benar, ada hubungan","pernyataan A benar, pernyataan B benar, tidak ada hubungan","pernyataan A benar, pernyataan B salah","pernyataan A salah, pernyataan B benar"],ans:1,topic:"Potensi Wilayah"},
+{n:42,q:"Barang tambang yang menghasilkan energi adalah …",
+stimulus:{type:"list",items:["(1) Minyak bumi","(2) Batu bara","(3) Air","(4) Gas alam","(5) Udara"]},
+opts:["(1), (2), dan (3)","(1), (2), dan (4)","(2), (3), dan (5)","(3), (4), dan (5)"],ans:1,topic:"SDA Tambang"},
+{n:43,q:"Pak Arman merupakan tenaga ahli dari Indonesia yang diakui dunia. Dengan keahlian yang dimilikinya ia bekerja di beberapa negara diantaranya di Inggris dan Australia. Bentuk kerjasama perdagangan antar negara tersebut adalah …",
+stimulus:{type:"none"},
+opts:["impor jasa kepada orang sendiri dengan imbalan","ekspor jasa kepada negara asing dengan imbalan","impor jasa kepada negara asing dengan imbalan","ekspor jasa kepada negara sendiri dengan imbalan"],ans:1,topic:"Perdagangan Internasional"},
+{n:44,q:"Negara dengan bendera tersebut merupakan salah satu negara anggota ASEAN yang memiliki pendapatan tinggi. Komoditas unggulan dari negara tersebut adalah …",
+stimulus:{type:"text",content:"[Bendera: kuning-hitam-putih dengan lambang merah di tengah — Brunei Darussalam]"},
+opts:["pariwisata dan pertanian","perkebunan karet dan rempah-rempah","perikanan dan pariwisata","minyak bumi dan gas alam"],ans:3,topic:"ASEAN"},
+{n:45,q:"Persaingan pada perdagangan internasional salah satunya ditandai dengan perang harga. Strategi yang harus dilakukan para pengusaha adalah dengan menghasilkan komoditas ekspor yang lebih murah dari pesaing. Pernyataan yang sesuai dengan wacana tersebut adalah …",
+stimulus:{type:"none"},
+opts:["melaksanakan strategi pemasaran digital","menyediakan tenaga kerja yang ahli berkelas internasional","meningkatkan daya saing dengan melakukan efisiensi biaya produksi","meningkatkan daya saing komoditas ekspor dengan membuat produk yang memiliki ciri khas/unik"],ans:2,topic:"Perdagangan Internasional"},
+{n:46,q:"Salah satu bukti pengaruh Islam dalam seni arsitektur di Indonesia dapat ditemukan pada …",
+stimulus:{type:"none"},
+opts:["bentuk atap masjid yang bertingkat seperti di Masjid Demak","patung-patung relief candi di Jawa Tengah","rumah adat Tongkonan yang memiliki bentuk panggung","bangunan benteng peninggalan Portugis di Maluku"],ans:0,topic:"Sejarah Islam"},
+{n:47,q:"Pernyataan di atas merupakan peran yang dilakukan oleh tokoh yang bernama?",
+stimulus:{type:"list",items:["(1) Ketua pergerakan bawah tanah dalam melawan pemerintahan militer Jepang","(2) Menyebarkan berita kekalahan Jepang pada 14 Agustus 1945","(3) Memimpin kabinet parlementer dari tahun 1945-1947","(4) Menjadi pemimpin diplomasi dalam upaya mempertahankan kemerdekaan Indonesia"]},
+opts:["Sayuti Melik","Soekarni","Sutan Syahrir","Ahmad Soebardjo"],ans:2,topic:"Tokoh Kemerdekaan"},
+{n:48,q:"Tokoh yang memimpin Perang Jawa (Tahun 1825–1830) melawan pemerintah kolonial Belanda adalah …",
+stimulus:{type:"none"},
+opts:["Sultan Agung","Pangeran Antasari","Pangeran Diponegoro","Sultan Hasanuddin"],ans:2,topic:"Perlawanan Kolonial"},
+{n:49,q:"Gambar di atas menunjukkan peristiwa bersejarah yang terjadi pada tanggal 11-15 November 1946. Peristiwa tersebut adalah …",
+stimulus:{type:"text",content:"[Foto hitam-putih: delegasi Indonesia dan Belanda di meja perundingan — peristiwa November 1946 di Linggarjati]"},
+opts:["Perundingan Renville","Perundingan Roem-Roijen","Perundingan Linggarjati","Konferensi Meja Bundar"],ans:2,topic:"Diplomasi Kemerdekaan"},
+{n:50,q:"Tokoh yang dimaksud dalam pernyataan di atas adalah …",
+stimulus:{type:"list",items:["(1) Menjabat sebagai Wakil Presiden pertama Republik Indonesia","(2) Berperan penting dalam perundingan-perundingan diplomasi setelah kemerdekaan","(3) Dikenal sebagai Bapak Koperasi Indonesia karena kontribusinya dalam pengembangan ekonomi rakyat","(4) Memiliki peran dalam menyusun konsep ekonomi Indonesia yang berbasis koperasi"]},
+opts:["Soekarno","Mohammad Hatta","Sutan Sjahrir","Ki Hajar Dewantara"],ans:1,topic:"Tokoh Nasional"},
+{n:51,q:"Salah satu adalah tradisi Sekaten yang dilakukan keraton Yogyakarta berkaitan dengan perayaan …",
+stimulus:{type:"none"},
+opts:["menyambut datangnya bulan suci Ramadhan","memperingati kelahiran Nabi Muhammad SAW","suka cita menyambut idul fitri 1 Syawal","mempersiapkan hewan kurban pada Idul Adha"],ans:1,topic:"Tradisi Islam"},
+{n:52,q:"Berdasarkan pernyataan di atas, hubungan dua pernyataan yang tepat adalah …",
+stimulus:{type:"table2",headers:["Pernyataan A","Pernyataan B"],rows:[["Kesultanan Aceh didirikan oleh Sultan Ali Mughayat Syah pada tahun 1496.","Kesultanan Aceh mengalami masa ekspansi dan pengaruh terluas pada masa kepemimpinan Sultan Iskandar Muda (1607–1636)."]]},
+opts:["pernyataan A benar, pernyataan B benar, dan ada hubungan","Pernyataan A benar, pernyataan B benar, tetapi tidak ada hubungan","pernyataan A benar, pernyataan B salah","pernyataan A salah, pernyataan B benar"],ans:0,topic:"Kerajaan Islam"},
+{n:53,q:"Tokoh tersebut memimpin perlawanan terhadap Penjajahan Belanda di daerah …",
+stimulus:{type:"text",content:"[Gambar: tokoh berpakaian merah dengan topi merah khas — Sultan Hasanuddin dari Kerajaan Gowa, Sulawesi Selatan]"},
+opts:["Sulawesi Utara","Sulawesi Tengah","Sulawesi Selatan","Sulawesi Tenggara"],ans:2,topic:"Perlawanan Kolonial"},
+{n:54,q:"Lokasi pertama pendaratan Jepang di Indonesia pada 11 Januari 1942 ditunjukkan oleh nomor …",
+stimulus:{type:"text",content:"[Peta Kalimantan: angka 1 = Kalimantan Selatan, angka 2 = Kalimantan Timur (Tarakan), angka 3 = Kalimantan Barat/Tengah, angka 4 = Kalimantan Utara]"},
+opts:["(1)","(2)","(3)","(4)"],ans:1,topic:"Pendudukan Jepang"},
+{n:55,q:"Pernyataan di atas merupakan peran yang dilakukan oleh tokoh …",
+stimulus:{type:"list",items:["(1) Tergabung dengan golongan muda yang menghendaki kemerdekaan Indonesia secara cepat tanpa menunggu janji Jepang","(2) Terlibat dalam mengamankan Soekarno dan Hatta ke Rengasdengklok","(3) Berperan mengetik naskah teks proklamasi","(4) Ikut andil dalam keanggotaan Komite Nasional Indonesia Pusat (KNIP)"]},
+opts:["Sayuti Melik","Soekarni","Sutan Syahrir","Ahmad Soebardjo"],ans:0,topic:"Proklamasi Kemerdekaan"},
+{n:56,q:"Berdasarkan gambar di atas, fungsi utama dari struktur peninggalan sejarah ini adalah …",
+stimulus:{type:"text",content:"[Gambar: batu-batu menhir berdiri tegak di area terbuka — peninggalan megalitik/menhir sebagai media pemujaan roh nenek moyang]"},
+opts:["bangunan yang digunakan untuk menyimpan benda-benda pusaka","tempat pemujaan terhadap roh nenek moyang","area pertemuan para tokoh adat untuk membahas masalah penting komunitas","struktur yang berfungsi sebagai penanda wilayah kekuasaan suatu suku"],ans:1,topic:"Sejarah Prasejarah"},
+{n:57,q:"Berdasarkan pernyataan di atas, hubungan dua pernyataan yang tepat adalah …",
+stimulus:{type:"table2",headers:["Pernyataan A","Pernyataan B"],rows:[["Situs Sangiran terletak di Provinsi Jawa Tengah dan dikenal sebagai salah satu situs arkeologi penting di Indonesia.","Situs Sangiran merupakan lokasi yang hanya menyimpan artefak berupa alat-alat batu dan tidak memiliki fosil manusia purba."]]},
+opts:["pernyataan A benar, pernyataan B benar, dan ada hubungan","pernyataan A benar, pernyataan B benar, tetapi tidak ada hubungan","pernyataan A benar, pernyataan B salah","pernyataan A salah, pernyataan B benar"],ans:2,topic:"Arkeologi"},
+{n:58,q:"Ciri khas arsitektur yang mencerminkan akulturasi, yaitu …",
+stimulus:{type:"text",content:"[Gambar: Masjid Menara Kudus — menara masjid berbentuk seperti menara candi Hindu berpadu dengan kubah masjid Islam, contoh akulturasi budaya]"},
+opts:["adanya elemen arsitektur candi hindu pada struktur menara","Penggunaan ornamen khas arab pada seluruh bagian menara","menara yang dibangun dengan bahan baku modern","menara yang tidak memiliki fungsi religius"],ans:0,topic:"Akulturasi Budaya"},
+{n:59,q:"Tokoh di atas dikenal sebagai pelaut Belanda yang pertama kali mencapai Nusantara. Tujuan utama dari kedatangan tokoh tersebut pada tahun 1595, yaitu …",
+stimulus:{type:"text",content:"[Gambar: potret Cornelis de Houtman — pelaut Belanda pertama yang mencapai Nusantara pada 1595]"},
+opts:["mencari tanah untuk dijadikan koloni","menjalin hubungan diplomatik dengan kerajaan lokal","mencari rempah-rempah dan membuka jalur perdagangan","menyebarkan agama Kristen"],ans:2,topic:"Kedatangan Bangsa Eropa"},
+{n:60,q:"Pada penerapan kebijakan Politik Etis, irigasi menjadi salah satu fokus utama. Alasan penerapan kebijakan tersebut yaitu …",
+stimulus:{type:"none"},
+opts:["untuk meningkatkan produksi pertanian demi kepentingan pasar Eropa","untuk mengurangi ketergantungan rakyat pada hasil laut","untuk memaksa rakyat berpindah dari pertanian ke industri","untuk mengurangi jumlah penduduk di pedesaan"],ans:0,topic:"Politik Etis"}
+];
+
+let nama='',kelas='',curIdx=0,answers=[],timerSec=90*60,timerInt=null;
+
+function startExam(){
+  nama=document.getElementById('inputNama').value.trim();
+  kelas=document.getElementById('inputKelas').value;
+  if(!nama){alert('Harap isi nama terlebih dahulu!');return;}
+  if(!kelas){alert('Harap pilih kelas!');return;}
+  answers=Array(SOAL.length).fill(null);
+  curIdx=0;
+  buildNav();
+  renderSoal();
+  showScreen('screenExam');
+  timerSec=90*60;
+  timerInt=setInterval(function(){
+    timerSec--;
+    if(timerSec<=0){clearInterval(timerInt);submitExam();}
+    var m=Math.floor(timerSec/60),s=timerSec%60;
+    document.getElementById('timerVal').textContent=(m<10?'0'+m:m)+':'+(s<10?'0'+s:s);
+    if(timerSec<=300)document.getElementById('timerVal').classList.add('timer-warn');
+  },1000);
+}
+
+function buildNav(){
+  var nav=document.getElementById('soalNav');
+  nav.innerHTML='';
+  SOAL.forEach(function(s,i){
+    var b=document.createElement('button');
+    b.id='nb'+i;b.textContent=i+1;
+    b.onclick=(function(idx){return function(){curIdx=idx;renderSoal();};})(i);
+    nav.appendChild(b);
+  });
+}
+
+function updateNav(){
+  SOAL.forEach(function(s,i){
+    var b=document.getElementById('nb'+i);
+    if(!b)return;
+    b.className=answers[i]!==null?'answered':'';
+    if(i===curIdx)b.classList.add('current');
+  });
+  var done=answers.filter(function(a){return a!==null;}).length;
+  document.getElementById('progressFill').style.width=(done/SOAL.length*100)+'%';
+}
+
+function renderSoal(){
+  var s=SOAL[curIdx];
+  document.getElementById('soalNum').textContent='Soal '+s.n+' dari '+SOAL.length+' | Topik: '+s.topic;
+  document.getElementById('soalQ').textContent=s.q;
+  var st=document.getElementById('soalStimulus');
+  st.innerHTML='';
+  if(s.stimulus.type==='list'){
+    var box=document.createElement('div');box.className='pernyataan-box';
+    s.stimulus.items.forEach(function(item){var p=document.createElement('div');p.textContent=item;box.appendChild(p);});
+    st.appendChild(box);
+  } else if(s.stimulus.type==='table'||s.stimulus.type==='table2'){
+    var t=document.createElement('table');
+    var thead=document.createElement('thead');
+    var tr0=document.createElement('tr');
+    s.stimulus.headers.forEach(function(h){var th=document.createElement('th');th.textContent=h;tr0.appendChild(th);});
+    thead.appendChild(tr0);t.appendChild(thead);
+    var tbody=document.createElement('tbody');
+    s.stimulus.rows.forEach(function(row){
+      var tr=document.createElement('tr');
+      row.forEach(function(cell){var td=document.createElement('td');td.textContent=cell;tr.appendChild(td);});
+      tbody.appendChild(tr);
+    });
+    t.appendChild(tbody);st.appendChild(t);
+  } else if(s.stimulus.type==='text'){
+    var box2=document.createElement('div');box2.className='pernyataan-box';
+    box2.textContent=s.stimulus.content;st.appendChild(box2);
+  }
+  var optDiv=document.getElementById('soalOptions');
+  optDiv.innerHTML='';
+  var labels=['A','B','C','D'];
+  s.opts.forEach(function(opt,i){
+    var lbl=document.createElement('label');
+    lbl.className=answers[curIdx]===i?'selected':'';
+    var inp=document.createElement('input');
+    inp.type='radio';inp.name='opt';inp.value=i;
+    if(answers[curIdx]===i)inp.checked=true;
+    (function(idx){
+      inp.onchange=function(){
+        answers[curIdx]=idx;
+        document.querySelectorAll('#soalOptions label').forEach(function(l,li){l.className=li===idx?'selected':'';});
+        updateNav();
+      };
+      lbl.onclick=function(){inp.checked=true;inp.onchange();};
+    })(i);
+    lbl.appendChild(inp);
+    var span=document.createElement('span');span.textContent=labels[i]+'. '+opt;
+    lbl.appendChild(span);
+    optDiv.appendChild(lbl);
+  });
+  updateNav();
+}
+
+function prevSoal(){if(curIdx>0){curIdx--;renderSoal();}}
+function nextSoal(){if(curIdx<SOAL.length-1){curIdx++;renderSoal();}}
+
+function confirmSubmit(){
+  var unanswered=answers.filter(function(a){return a===null;}).length;
+  if(unanswered>0){
+    if(!confirm('Masih ada '+unanswered+' soal yang belum dijawab. Yakin ingin mengumpulkan?'))return;
+  }
+  submitExam();
+}
+
+function submitExam(){
+  clearInterval(timerInt);
+  var benar=0;
+  SOAL.forEach(function(s,i){if(answers[i]===s.ans)benar++;});
+  var salah=answers.filter(function(a,i){return a!==null&&a!==SOAL[i].ans;}).length;
+  var kosong=answers.filter(function(a){return a===null;}).length;
+  var nilai=Math.round(benar/SOAL.length*100);
+  document.getElementById('resNama').textContent=nama+' — Kelas '+kelas;
+  document.getElementById('resScore').textContent=nilai;
+  document.getElementById('resBenar').textContent=benar;
+  document.getElementById('resSalah').textContent=salah;
+  document.getElementById('resKosong').textContent=kosong;
+  var label='',feedback='';
+  if(nilai>=90){label='Luar Biasa! Nilai Sempurna!';feedback='Selamat! Nilai kamu sangat tinggi. Kamu sangat menguasai materi IPS SD tingkat kabupaten. Pertahankan semangat belajarmu dan terus berlatih untuk OSN tingkat provinsi!';}
+  else if(nilai>=80){label='Sangat Baik!';feedback='Kerja bagus! Nilai kamu sudah sangat baik. Pelajari kembali soal-soal yang masih salah dan pastikan kamu memahami materi secara mendalam untuk hasil yang lebih sempurna.';}
+  else if(nilai>=70){label='Baik';feedback='Nilaimu sudah cukup baik. Fokuslah pada topik-topik yang masih lemah, terutama materi sejarah dan geografi Indonesia. Banyak berlatih soal agar lebih siap menghadapi OSN!';}
+  else if(nilai>=60){label='Cukup';feedback='Kamu sudah berusaha! Tingkatkan lagi dengan rajin membaca buku IPS, memahami peta Indonesia, dan mempelajari tokoh-tokoh sejarah. Kamu pasti bisa lebih baik!';}
+  else{label='Perlu Belajar Lebih Keras';feedback='Jangan menyerah! Setiap kesalahan adalah pelajaran berharga. Ulangi materi dari awal, buat catatan ringkasan, dan minta bimbingan dari guru atau orang tua. Semangat!';}
+  document.getElementById('resLabel').textContent=label;
+  document.getElementById('resFeedback').textContent=feedback;
+  var labels=['A','B','C','D'];
+  var tbody=document.getElementById('detailTbody');tbody.innerHTML='';
+  SOAL.forEach(function(s,i){
+    var tr=document.createElement('tr');
+    var isBenar=answers[i]===s.ans;
+    var jawaban=answers[i]!==null?labels[answers[i]]:'—';
+    var kunci=labels[s.ans];
+    tr.innerHTML='<td>'+s.n+'</td><td style="font-size:12px">'+s.topic+'</td><td>'+jawaban+'</td><td>'+kunci+'</td><td><span class="badge '+(isBenar?'badge-ok':'badge-err')+'">'+(isBenar?'Benar':'Salah')+'</span></td>';
+    tbody.appendChild(tr);
+  });
+  showScreen('screenResult');
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
